@@ -3,13 +3,17 @@
 const express = require('express');
 const app = express();
 
-app.use(express.static(_dirname));
+app.use(express.static(__dirname));
 
 const bodyParser = require('body-parser');
 const expressSession = require('express-session') ({
     secret: 'secret',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        maxAge: 60000
+    }
 }); 
 
 app.use(bodyParser.json());
@@ -27,6 +31,7 @@ app.use(passport.session());
 
 /* MONGOOSE SETUP */
 const mongoose = require('mongoose');
+// var Schema = mongoose.Schema;
 const passportLocalMongoose = require('passport-local-mongoose');
 
 mongoose.connect('mongodb://localhost/MyDatabase',
@@ -69,17 +74,17 @@ app.post('/login', (req, res, next) => {
 
 app.get('/login',
     (req, res) => res.sendFile('html/login.html',
-    { root: _dirname })
+    { root: __dirname })
 );
 
 app.get('/',
     connectEnsureLogin.ensureLoggedIn(),
-    (req, res) => res.sendFile('html/index.html', {root: _dirname })
+    (req, res) => res.sendFile('html/index.html', {root: __dirname })
 );
 
 app.get('/private',
     connectEnsureLogin.ensureLoggedIn(),
-    (req, res) => res.sendFile('html/private.html', {root: _dirname})
+    (req, res) => res.sendFile('html/private.html', {root: __dirname})
 );
 
 app.get('/user',
@@ -91,12 +96,12 @@ app.get('/logout',
     (req, res) => {
         req.logout(),
         res.sendFile('html/logout.html',
-        { root: _dirname }
+        { root: __dirname }
         )
     });
 
     /* REGISTER SOME USERS */
 
-UserDetails.register({username:'paul', active: false}, 'paul');
-UserDetails.register({username:'joy', active: false}, 'joy');
-UserDetails.register({username:'ray', active: false}, 'ray');
+// UserDetails.register({username:'paul', active: false}, 'paul');
+// UserDetails.register({username:'joy', active: false}, 'joy');
+// UserDetails.register({username:'ray', active: false}, 'ray');
